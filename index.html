@@ -1,7 +1,64 @@
 <html>
-    <head><title>Web API Example</title></head>
+    <head>
+            <link rel="manifest" href="/manifest.json" />
+            <title>Web API Example</title></head>
     <body>
         <span id="welcomemsg">You will be asked for permission to notify</span>
-    <script src="NontificationServiceWorker.js"> </script>
+    <script>
+
+window.vapidPublicKey = new Uint8Array("BKur2LFDqc57hoeqYCh3gc8wEUbNxl7gSnd9tEyMdJCOOrG9mYnoKnsCQyH9ESrdiak8_OmLO1XjlAeGbz52PXU");
+
+    // Let's check if the browser supports notifications
+if (!("Notification" in window)) {
+  console.error("This browser does not support desktop notification");
+}
+
+// Let's check whether notification permissions have already been granted
+else if (Notification.permission === "granted") {
+  console.log("Permission to receive notifications has been granted");
+}
+
+// Otherwise, we need to ask the user for permission
+else if (Notification.permission !== 'denied') {
+  Notification.requestPermission(function (permission) {
+  // If the user accepts, let's create a notification
+    if (permission === "granted") {
+      console.log("Permission to receive notifications has been granted. Registering ServiceWorker.js");
+ 
+        // Register the serviceWorker script at /serviceworker.js from our server if supported
+        if (navigator.serviceWorker) {
+
+            navigator.serviceWorker.ready.then((serviceWorkerRegistration) => {
+                serviceWorkerRegistration.pushManager
+                .subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: window.vapidPublicKey
+                });
+            });
+
+        navigator.serviceWorker.register('/serviceworker.js')
+        .then(function(reg) {
+            console.log('Service worker change, registered the service worker');
+        });
+        }
+        // Otherwise, no push notifications :(
+        else {
+        console.error('Service worker is not supported in this browser');
+        }
+        // Service Worker Registration END
+        
+    }
+  });
+}
+
+
+    
+    
+    
+ 
+
+
+
+    </script>
     </body>
 </html>
