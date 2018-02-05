@@ -33,13 +33,32 @@ else if (Notification.permission !== 'denied') {
                 .subscribe({
                     userVisibleOnly: true,
                     applicationServerKey: window.vapidPublicKey
-                });
+                })
+                .then(function (subcription) {
+                    console.log("Connecting to backend server with the subscriptiopn",subcription.toJSON());
+
+                    var fields = {endpoint:sub.endpoint,token:sub.keys.p256dh,auth:sub.keys.auth};
+
+                    fetch('/newbrowser', {
+                        method: 'POST',
+                        body: JSON.stringify(fields)
+                    }).then(function(response) {
+                        return response.json();
+                    }).then(function(data) {
+                        console.dir(data);
+                    });
+                });;
             });
 
-        navigator.serviceWorker.register('/serviceworker.js')
-        .then(function(reg) {
-            console.log('Service worker change, registered the service worker');
-        });
+            navigator.serviceWorker.register('/serviceworker.js')
+            .then(function(reg) {
+                console.log('Service worker change, registered the service worker');
+            });
+
+            // Let's communicate with the server about our information
+
+            https://rossta.net/blog/using-the-web-push-api-with-vapid.html
+
         }
         // Otherwise, no push notifications :(
         else {
