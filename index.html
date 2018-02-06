@@ -72,8 +72,8 @@ function PostSubscriptionDetails(Subscription) {
         body: JSON.stringify(fields)
     }).then(function(data) {
         console.log("returned from server:");
-	console.log(data);
-        document.GetElementById("welcomemsg").innerHTML = "Server received our subscription. Get ready for some Notifications!!! Woop Woop!";
+	    console.log(data);
+        Document.getElementById("welcomemsg").innerHTML = "Server received our subscription. Get ready for some Notifications!!! Woop Woop!";
         // Todo. Save anything you needed when you "regsitered" with the server and told him how to notify you.
     });
     
