@@ -70,8 +70,6 @@ function PostSubscriptionDetails(Subscription) {
         method: 'POST',
         headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify(fields)
-    }).then(function(response) {
-        return response.json();
     }).then(function(data) {
         console.log("returned from server:" + data);
         // Todo. Save anything you needed when you "regsitered" with the server and told him how to notify you.
