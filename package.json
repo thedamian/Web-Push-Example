@@ -17,6 +17,9 @@
     "api",
     "notification"
   ],
+  "engines": {
+    "node": ">= 4"
+  },
   "author": "Damian Montero",
   "license": "MIT",
   "bugs": {
