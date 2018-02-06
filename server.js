@@ -28,8 +28,8 @@ app.listen(port,function() { console.log("started on port " + port); });
 // Push notification setting up
 const webpush = require('web-push');
 // VAPID keys should only be generated only once. we've run the vapid.js file to do this.
-var vapidPublicKey = "BJlEoQeG_Z5umiIhGawf4scU-qF6xprAYbeN18g7dg7Wr89gwcff-Ns47Tw3u307r9eCBm8KAYWDe-SExffdSF0";
-var vapidPrivateKey = "_ZUKItGkbvBsFQnSPGos3afoHJMZ2x25IavgMwIGfwU"
+var vapidPublicKey = "-- YOUR VAPID public key here --";
+var vapidPrivateKey = "-- YOUR VAPID private key here --"
 
 webpush.setVapidDetails(
   'mailto:damian@bocajs.org',
