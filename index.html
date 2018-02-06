@@ -6,7 +6,7 @@
         <span id="welcomemsg">You will be asked for permission to notify</span>
     <script>
 
-var vapidPublicKey = urlBase64ToUint8Array("--VAPID PUBLIC KEY HERE--");
+var vapidPublicKey =urlBase64ToUint8Array("BJlEoQeG_Z5umiIhGawf4scU-qF6xprAYbeN18g7dg7Wr89gwcff-Ns47Tw3u307r9eCBm8KAYWDe-SExffdSF0");
 
     // Let's check if the browser supports notifications
 if (!("Notification" in window)) {
@@ -73,7 +73,7 @@ function PostSubscriptionDetails(Subscription) {
     }).then(function(data) {
         console.log("returned from server:");
 	    console.log(data);
-       // Document.getElementById("welcomemsg").innerHTML = "Server received our subscription. Get ready for some Notifications!!! Woop Woop!";
+        document.getElementById("welcomemsg").innerHTML = "Server received our subscription. Get ready for some Notifications!!! Woop Woop!";
         // Todo. Save anything you needed when you "regsitered" with the server and told him how to notify you.
     });
     
