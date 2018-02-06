@@ -1,9 +1,10 @@
 <html>
     <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
             <link rel="manifest" href="/manifest.json" />
             <title>Web API Example</title></head>
     <body>
-        <span id="welcomemsg">You will be asked for permission to notify</span>
+        <span id="welcomemsg">If you see this AFTER you accepted Permissions you should refresh the page.</span>
     <script>
 
 var vapidPublicKey =urlBase64ToUint8Array("BJlEoQeG_Z5umiIhGawf4scU-qF6xprAYbeN18g7dg7Wr89gwcff-Ns47Tw3u307r9eCBm8KAYWDe-SExffdSF0");
@@ -11,6 +12,7 @@ var vapidPublicKey =urlBase64ToUint8Array("BJlEoQeG_Z5umiIhGawf4scU-qF6xprAYbeN1
     // Let's check if the browser supports notifications
 if (!("Notification" in window)) {
   alert("This browser does not support desktop notification. This Demo has failed :( ");
+  document.getElementById("welcomemsg").innerHTML = "This browser does not support desktop notification. This Demo has failed :( ";
 }
 else {
 
@@ -22,7 +24,7 @@ else {
     if (Notification.permission === 'denied' )
     { 
         // fail early
-        alert("You've denied notification on a notifcation DEMO! I'm sad!");
+        document.getElementById("welcomemsg").innerHTML = "You've denied notification on a notifcation DEMO! I'm sad!";
     } {
         
         // We are a go. Everything is ready. 
