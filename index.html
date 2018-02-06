@@ -6,70 +6,88 @@
         <span id="welcomemsg">You will be asked for permission to notify</span>
     <script>
 
-window.vapidPublicKey = new Uint8Array("BKur2LFDqc57hoeqYCh3gc8wEUbNxl7gSnd9tEyMdJCOOrG9mYnoKnsCQyH9ESrdiak8_OmLO1XjlAeGbz52PXU");
+var vapidPublicKey = new urlBase64ToUint8Array("BJlEoQeG_Z5umiIhGawf4scU-qF6xprAYbeN18g7dg7Wr89gwcff-Ns47Tw3u307r9eCBm8KAYWDe-SExffdSF0");
 
     // Let's check if the browser supports notifications
 if (!("Notification" in window)) {
-  console.error("This browser does not support desktop notification");
+  alert("This browser does not support desktop notification. This Demo has failed :( ");
 }
+else {
 
-// Let's check whether notification permissions have already been granted
-else if (Notification.permission === "granted") {
-  console.log("Permission to receive notifications has been granted");
-}
+    Notification.requestPermission(
+    function(status) {
+        console.log('Notification Permissiong status:',status);
+    });
+    
+    if (Notification.permission === 'denied' )
+    { 
+        // fail early
+        alert("You've denied notification on a notifcation DEMO! I'm sad!");
+    } {
+        
+        // We are a go. Everything is ready. 
+        // We've asked for notificaiton permissiongs. And we've been given it.
+        // Time to register our service worker to listen for notifications and pop them up when we receive them from the server.
 
-// Otherwise, we need to ask the user for permission
-else if (Notification.permission !== 'denied') {
-  Notification.requestPermission(function (permission) {
-  // If the user accepts, let's create a notification
-    if (permission === "granted") {
-      console.log("Permission to receive notifications has been granted. Registering ServiceWorker.js");
- 
         // Register the serviceWorker script at /serviceworker.js from our server if supported
-        if (navigator.serviceWorker) {
+        if (navigator.serviceWorker) { // yes this browser has a serviceWorker functionality.
+        
+            // Register and get the notification details and send them to our back end server.
+                navigator.serviceWorker.register('/serviceworker.js')
+               .then(function(registration) {
+                     const subscribeOptions = {
+                       userVisibleOnly: true,
+                       applicationServerKey: urlBase64ToUint8Array(
+                                               'BJlEoQeG_Z5umiIhGawf4scU-qF6xprAYbeN18g7dg7Wr89gwcff-Ns47Tw3u307r9eCBm8KAYWDe-SExffdSF0'
+                                             )
+                     };
+                 
+                     return registration.pushManager.subscribe(subscribeOptions);
+               })
+               .then(function(pushSubscription) {
+                   PostSubscriptionDetails(pushSubscription);
+               });
 
-            navigator.serviceWorker.ready.then((serviceWorkerRegistration) => {
-                serviceWorkerRegistration.pushManager
-                .subscribe({
-                    userVisibleOnly: true,
-                    applicationServerKey: window.vapidPublicKey
-                })
-                .then(function (subcription) {
-                    console.log("Connecting to backend server with the subscriptiopn",subcription.toJSON());
 
-                    var fields = {endpoint:sub.endpoint,token:sub.keys.p256dh,auth:sub.keys.auth};
 
-                    fetch('/newbrowser', {
-                        method: 'POST',
-                        body: JSON.stringify(fields)
-                    }).then(function(response) {
-                        return response.json();
-                    }).then(function(data) {
-                        console.dir(data);
-                    });
-                });;
-            });
 
-            navigator.serviceWorker.register('/serviceworker.js')
-            .then(function(reg) {
-                console.log('Service worker change, registered the service worker');
-            });
-
-            // Let's communicate with the server about our information
-
-            https://rossta.net/blog/using-the-web-push-api-with-vapid.html
-
-        }
-        // Otherwise, no push notifications :(
-        else {
-        console.error('Service worker is not supported in this browser');
-        }
-        // Service Worker Registration END
+        } // end if (navigator.serviceWorker) {
+        
         
     }
-  });
+    
 }
 
+function PostSubscriptionDetails(Subscription) {
+    
+    var sub = JSON.parse(JSON.stringify(Subscription));
+    
+    var token = sub.keys.p256dh;
+    var auth = sub.keys.auth;
+    var fields = {endpoint:sub.endpoint,token:token,auth:auth};
+
+    fetch('/newbrowser', {
+        method: 'POST',
+        headers: new Headers({'Content-Type': 'application/json'}),
+        body: JSON.stringify(fields)
+    }).then(function(response) {
+        return response.json();
+    }).then(function(data) {
+        console.log("returned from server:" + data);
+        // Todo. Save anything you needed when you "regsitered" with the server and told him how to notify you.
+    });
+    
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/')
+  ;
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+}
 
     
     

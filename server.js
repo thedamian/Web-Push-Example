@@ -11,12 +11,12 @@ This server has three purposes
 
 
 // Setup the basics for a basic express server
-var http = require("http")
+//var http = require("http")
 var express = require("express")
 var app = express()
 var port = process.env.PORT || 5000
 var bodyParser = require("body-parser");
-var server = http.createServer(app);
+//var server = http.createServer(app);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + "/"));
@@ -28,12 +28,12 @@ app.listen(port,function() { console.log("started on port " + port); });
 // Push notification setting up
 const webpush = require('web-push');
 // VAPID keys should only be generated only once. we've run the vapid.js file to do this.
-var vapidPublicKey = "BKur2LFDqc57hoeqYCh3gc8wEUbNxl7gSnd9tEyMdJCOOrG9mYnoKnsCQyH9ESrdiak8_OmLO1XjlAeGbz52PXU";
-var vapidPrivateKey = "Snxu3RUYmM5kxGRTWnPlHbVC2gTcn8MExadAY2xWnjY"
+var vapidPublicKey = "BJlEoQeG_Z5umiIhGawf4scU-qF6xprAYbeN18g7dg7Wr89gwcff-Ns47Tw3u307r9eCBm8KAYWDe-SExffdSF0";
+var vapidPrivateKey = "_ZUKItGkbvBsFQnSPGos3afoHJMZ2x25IavgMwIGfwU"
 
-var options = { gcmAPIKey: 'AAAAwuJ2G8o:APA91bG6whHaF0VY7NYzgE2fN8DE2YWfyMZ2jl0J3h-yhROkhWOIx8DVhmun9WkcSSQvNpZH6xheT7qIi8GlEHw_tV9IyaoKoR_gBaOuM57sR1UZp73VUmGm5sPdeZOBDuJnQxK4WSLq', TTL: 60};
+//var options = { gcmAPIKey: 'AAAAwuJ2G8o:APA91bG6whHaF0VY7NYzgE2fN8DE2YWfyMZ2jl0J3h-yhROkhWOIx8DVhmun9WkcSSQvNpZH6xheT7qIi8GlEHw_tV9IyaoKoR_gBaOuM57sR1UZp73VUmGm5sPdeZOBDuJnQxK4WSLq', TTL: 60};
 
-webpush.setGCMAPIKey('AAAAwuJ2G8o:APA91bG6whHaF0VY7NYzgE2fN8DE2YWfyMZ2jl0J3h-yhROkhWOIx8DVhmun9WkcSSQvNpZH6xheT7qIi8GlEHw_tV9IyaoKoR_gBaOuM57sR1UZp73VUmGm5sPdeZOBDuJnQxK4WSLq');
+//webpush.setGCMAPIKey('AAAAwuJ2G8o:APA91bG6whHaF0VY7NYzgE2fN8DE2YWfyMZ2jl0J3h-yhROkhWOIx8DVhmun9WkcSSQvNpZH6xheT7qIi8GlEHw_tV9IyaoKoR_gBaOuM57sR1UZp73VUmGm5sPdeZOBDuJnQxK4WSLq');
 webpush.setVapidDetails(
   'mailto:damian@bocajs.org',
   vapidPublicKey,
@@ -48,29 +48,46 @@ var tokenlist = [];
 
 app.get('/notify',function(req,res) { 
 // Let ALL browsers pop up a message
-   console.log(" We've been notified. Now send notification to all browsers");
+  // console.log(" We've been notified. Now send notification to all browsers");
+   
+   var options = {
+       TTL: 24 * 60 * 60,
+       vapidDetails: {
+         subject: 'mailto:damian@bocajs.com',
+         publicKey: vapidPublicKey,
+         privateKey: vapidPrivateKey
+       }
+   };
+   var message = "Web Notification from BocaJS";
+       
+   // Hit each browser that registered with us.
    for (var i=0;i < tokenlist.length;i++) {
-       console.log("Notify token: " + tokenlist.token);
        // Code here.
-       var payload = "Web Notification from BocaJS";
        var pushSubscription = {
-        "endpoint":tokenlist.token,
+        "endpoint":tokenlist[i].endpoint,
         "keys": {
-            "p256dh":tokenlist.token,
-            "auth": tokenlist.auth
-        }
-    }
-       webpush.sendNotification(pushSubscription,payload,options);
-
+            "p256dh":tokenlist[i].token,
+            "auth": tokenlist[i].auth
+            } // end keys
+       }; // end pushSubscription 
+       
+       // MAGIC!
+       webpush.sendNotification(pushSubscription,message,options);
    }
+   
+   console.log(tokenlist.length + " notification sent");
+   
+   res.end( tokenlist.length + " notification sent");
+   
 });
 
 app.post('/newbrowser',function(req,res){
-    var token = req.query.token;
+    var token = req.body.token;
     var isSafari = (req.headers['user-agent'].indexOf("Safari") > 0);
-    var auth = req.query.auth;
-    var endpoint = req.query.endpoint;
-    tokenlist.add({token:token,os:os,endpoint:endpoint});
-    console.log("adding token: "+ token + " with isSafari: " + isSafari + " and notification url:" + endpoint);
+    var auth = req.body.auth;
+    var endpoint = req.body.endpoint;
+    tokenlist.push({token:token,auth:auth,isSafari:isSafari,endpoint:endpoint});
+    console.log("adding token: "+ token + " with auth: " + auth + " and notification url:" + endpoint);
+    res.end("ok");
 });
 
