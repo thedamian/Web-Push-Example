@@ -28,9 +28,12 @@ app.listen(port,function() { console.log("started on port " + port); });
 // Push notification setting up
 const webpush = require('web-push');
 // VAPID keys should only be generated only once. we've run the vapid.js file to do this.
-var vapidPublicKey = "--VAPID PUBLIC KEY HERE--";
-var vapidPrivateKey = "--VAPID PRIVATE KEY HERE--"
+var vapidPublicKey = "BJlEoQeG_Z5umiIhGawf4scU-qF6xprAYbeN18g7dg7Wr89gwcff-Ns47Tw3u307r9eCBm8KAYWDe-SExffdSF0";
+var vapidPrivateKey = "_ZUKItGkbvBsFQnSPGos3afoHJMZ2x25IavgMwIGfwU"
 
+//var options = { gcmAPIKey: 'AAAAwuJ2G8o:APA91bG6whHaF0VY7NYzgE2fN8DE2YWfyMZ2jl0J3h-yhROkhWOIx8DVhmun9WkcSSQvNpZH6xheT7qIi8GlEHw_tV9IyaoKoR_gBaOuM57sR1UZp73VUmGm5sPdeZOBDuJnQxK4WSLq', TTL: 60};
+
+//webpush.setGCMAPIKey('AAAAwuJ2G8o:APA91bG6whHaF0VY7NYzgE2fN8DE2YWfyMZ2jl0J3h-yhROkhWOIx8DVhmun9WkcSSQvNpZH6xheT7qIi8GlEHw_tV9IyaoKoR_gBaOuM57sR1UZp73VUmGm5sPdeZOBDuJnQxK4WSLq');
 webpush.setVapidDetails(
   'mailto:damian@bocajs.org',
   vapidPublicKey,
