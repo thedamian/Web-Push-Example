@@ -11,3 +11,5 @@ A simple example of a Web Push Notification website and backend.
 Now browse to your http://localhost:5000  
 
 To send notifications go to http://localhpst:5000/notify
+
+See slides and presentation of this code here: https://docs.google.com/presentation/d/1-pkdU-Ol26OpuISnqPzFne5LW7flGOMWYxIw9HrlIqQ
