@@ -76,7 +76,7 @@ app.get('/notify',function(req,res) {
    // Hit each browser that registered with us.
    for (var i=0;i < tokenlist.length;i++) {
        // Code here.
-       let pushSubscription = {
+       const pushSubscription = {
         "endpoint":tokenlist[i].endpoint,
         "keys": {
             "p256dh":tokenlist[i].token,
