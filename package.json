@@ -30,6 +30,7 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "http": "0.0.0",
-    "web-push": "^3.2.5"
+    "web-push": "^3.2.5",
+     "minimist": ">=1.2.6"
   }
 }
