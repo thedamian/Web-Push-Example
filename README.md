@@ -2,9 +2,7 @@
 A simple example of a Web Push Notification website and backend.
 
 # Steps to build on your box.
-1) run ```node vapid.js``` (get your own private & public keys needed)
-2) edit the ```server.js``` file and replace the ```-- YOUR VAPID public key here --``` and ```private``` values
-3) edit the ```index.html``` and put the public key in the ```-- YOUR VAPID public key here --``` value
+1) run ```node vapid.js``` - This will get your private and public keys from google servers and WRITE a .env file
 4) run ```npm install```
 5) now run```npm start```
 6) browse to http://localhost:5000  and agree to receive notications (You can navigate to your computers IP from a phone or other device to get notifications there also)

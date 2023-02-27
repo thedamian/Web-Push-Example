@@ -4,14 +4,14 @@
             <link rel="manifest" href="/manifest.json" />
             <title>Web API Example</title></head>
     <body>
-        <span id="welcomemsg">If you see this AFTER you accepted Permissions you should refresh the page.</span>
+        <span id="welcomemsg">If you see this AFTER you accepted Permissions you should refresh the page.<BR>If you were NOT asked for push permissions then please look at the URL and APPROVAL push for this demo</span>
     <script>
 
-var vapidPublicKey =urlBase64ToUint8Array("-- YOUR VAPID public key here --");
+var vapidPublicKey =urlBase64ToUint8Array('<%- vapidPublicKey %>');
 
     // Let's check if the browser supports notifications
 if (!("Notification" in window)) {
-  alert("This browser does not support desktop notification. This Demo has failed :( ");
+  alert("This browser does not support web push notification. This Demo has failed for you.  :'-( ");
   document.getElementById("welcomemsg").innerHTML = "This browser does not support desktop notification. This Demo has failed :( ";
 }
 else {
@@ -70,7 +70,7 @@ function PostSubscriptionDetails(Subscription) {
 
     fetch('/newbrowser', {
         method: 'POST',
-        headers: new Headers({'Content-Type': 'application/json'}),
+       headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify(fields)
     }).then(function(data) {
         console.log("returned from server:");

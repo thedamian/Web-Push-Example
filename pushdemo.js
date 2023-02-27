@@ -12,21 +12,22 @@ This server has three purposes
 
 // Setup the basics for a basic express server
 const express = require("express")
+const cors = require("cors")
 require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 5004
-const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(express.static(__dirname + "/"));
-app.listen(port,function() { console.log("started on port " + port); });
-// express is setup for the basics
+app.use(express.json()); // Used to parse JSON bodies
+app.use(express.urlencoded({ extended: true }));
+app.set('view engine', 'ejs');
+app.set("views", __dirname + `/views`);
+app.use(express.static(__dirname + "/public"));
 
 // Push notification setting up
 const webpush = require('web-push');
 // VAPID keys should only be generated only once. we've run "node vapid.js" to do this.
 const vapidPublicKey = process.env.WEBPUSHPUBLICKEY;
 const vapidPrivateKey = process.env.WEBPUSHPRIVATEKEY;
+
 
 
 
@@ -38,6 +39,9 @@ webpush.setVapidDetails(
 // Push notification setting up
 // Push notification setting up
 
+app.get("/",(req,res) => {
+   res.render("index.ejs",{vapidPublicKey:vapidPublicKey});
+});
 
 var tokenlist = [];
 
@@ -88,3 +92,4 @@ app.get('/notify',function(req,res) {
 });
 
 
+app.listen(port,function() { console.log("started on port " + port); });
