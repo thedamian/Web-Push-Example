@@ -2,7 +2,7 @@
   "name": "web-push-example",
   "version": "1.0.0",
   "description": "An Example of using the Web Push API and adding safari Push functionality",
-  "main": "server.js",
+  "main": "pushdemo.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
@@ -28,9 +28,10 @@
   "homepage": "https://github.com/thedamian/Web-Push-Example#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "dotenv": "^16.0.3",
     "express": "^4.16.2",
     "http": "0.0.0",
-    "web-push": "^3.2.5",
-     "minimist": ">=1.2.6"
+    "minimist": ">=1.2.6",
+    "web-push": "^3.2.5"
   }
 }
