@@ -82,7 +82,11 @@ app.get('/notify',function(req,res) {
        }; // end pushSubscription 
        
        // MAGIC!
-       webpush.sendNotification(pushSubscription,message,options);
+       try {
+	 webpush.sendNotification(pushSubscription,message,options);
+       } catch(ex) { 
+	  console.error("error in sendNotification)",ex);
+       }
    }
    
    console.log(tokenlist.length + " notification sent");
