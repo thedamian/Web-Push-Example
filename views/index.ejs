@@ -10,7 +10,7 @@
             <button onclick="location.reload();">Refresh the Page</button>
         </span>
         
-    <script>
+    <script type="module">
 
 let  vapidPublicKey =urlBase64ToUint8Array('<%- vapidPublicKey %>'); // this is the PUBLIC Key, passed up from the backend that rendered this page.
 
@@ -29,7 +29,7 @@ else {
     { 
         // fail early
         document.getElementById("welcomemsg").innerHTML = "You've denied notification on a notifcation DEMO! I'm sad!";
-    } {
+    } else {
         
         // We are a go. Everything is ready. 
         // We've asked for notificaiton permissiongs. And we've been given it.
