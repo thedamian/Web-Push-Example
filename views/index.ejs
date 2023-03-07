@@ -72,7 +72,7 @@ async function registerServiceWorker() {
 }
 
 // we have to attach AFTER the function is defined. Attach to the "register" button required by some browsers
-document.getElementById("register").on("click",()=> {
+document.getElementById("register").addEventListener("click",()=> {
     registerServiceWorker().catch(console.error);
 })
 
