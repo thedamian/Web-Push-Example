@@ -59,7 +59,8 @@ else {
 
 async function registerServiceWorker() {
             // Register and get the notification details and send them to our back end server.
-            const register = await navigator.serviceWorker.register('./serviceworker.js', {scope: '/'});
+            await navigator.serviceWorker.register('./serviceworker.js');
+            const register = await navigator.serviceWorker.ready;
             const subscription = await register.pushManager.subscribe({ userVisibleOnly: true,applicationServerKey: vapidPublicKey });
             PostSubscriptionDetails(subscription);
 }
