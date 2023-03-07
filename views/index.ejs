@@ -49,15 +49,21 @@ else {
                 console.log('Service Worker UNregistration failed: ', err);
             });
 
-        
-            // Register and get the notification details and send them to our back end server.
-            const register = await navigator.serviceWorker.register('./serviceworker.js', {scope: '/'});
-            const subscription = await register.pushManager.subscribe({ userVisibleOnly: true,applicationServerKey: vapidPublicKey });
-            PostSubscriptionDetails(subscription);
+            // we are calling this method so it can be called asynchronously 
+            registerServiceWorker().catch(console.error)
+
 
         } // end of  - if ('serviceWorker' in navigator) {
     } // end of if (Notification.permission === 'denied' )
 } // end of - if (!("Notification" in window))
+
+async function registerServiceWorker() {
+            // Register and get the notification details and send them to our back end server.
+            const register = await navigator.serviceWorker.register('./serviceworker.js', {scope: '/'});
+            const subscription = await register.pushManager.subscribe({ userVisibleOnly: true,applicationServerKey: vapidPublicKey });
+            PostSubscriptionDetails(subscription);
+}
+
 
 function PostSubscriptionDetails(Subscription) {
     
