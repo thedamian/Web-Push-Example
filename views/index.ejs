@@ -51,17 +51,10 @@ else {
 
         
             // Register and get the notification details and send them to our back end server.
-                navigator.serviceWorker.register('/serviceworker.js')
-               .then(function(registration) {
-                     const subscribeOptions = {
-                       userVisibleOnly: true,
-                       applicationServerKey: vapidPublicKey
-                     };
-                     return registration.pushManager.subscribe(subscribeOptions);
-               })
-               .then(function(pushSubscription) {
-                   PostSubscriptionDetails(pushSubscription);
-               });
+            const register = await navigator.serviceWorker.register('./serviceworker.js', {scope: '/'});
+            const subscription = await register.pushManager.subscribe({ userVisibleOnly: true,applicationServerKey: vapidPublicKey });
+            PostSubscriptionDetails(subscription);
+
         } // end of  - if ('serviceWorker' in navigator) {
     } // end of if (Notification.permission === 'denied' )
 } // end of - if (!("Notification" in window))
