@@ -66,7 +66,7 @@ else {
 async function registerServiceWorker() {
             // Register and get the notification details and send them to our back end server.
             await navigator.serviceWorker.register('./serviceworker.js');
-            const register = await navigator.serviceWorker.ready;
+            const register = await navigator.serviceWorker.ready; // we have to wait or there might be a race condition. Now GOOOOO!!!!!!
             const subscription = await register.pushManager.subscribe({ userVisibleOnly: true,applicationServerKey: vapidPublicKey });
             PostSubscriptionDetails(subscription);
 }
