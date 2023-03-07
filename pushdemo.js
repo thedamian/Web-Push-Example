@@ -24,12 +24,12 @@ app.use(express.static(__dirname + "/public"));
 
 // Push notification setting up
 const webpush = require('web-push');
-// VAPID keys should only be generated only once. we've run "node vapid.js" to do this.
-const vapidPublicKey = process.env.WEBPUSHPUBLICKEY;
-const vapidPrivateKey = process.env.WEBPUSHPRIVATEKEY;
+const vapidKeys = webpush.generateVAPIDKeys()
+//webpush.setGCMAPIKey(process.env.GCMAPIKEY);
 
-
-
+const vapidPublicKey = vapidKeys.publicKey;
+const vapidPrivateKey = vapidKeys.privateKey;
+console.log("Vapid",vapidPublicKey,vapidPrivateKey);
 
 webpush.setVapidDetails(
   'mailto:damian@floridajs.com',
@@ -57,8 +57,6 @@ app.post('/newbrowser',function(req,res){
 
 
 app.get('/notify',function(req,res) { 
-// Let ALL browsers pop up a message
-  // console.log(" We've been notified. Now send notification to all browsers");
    
    var options = {
        TTL: 24 * 60 * 60,
@@ -69,6 +67,7 @@ app.get('/notify',function(req,res) {
        }
    };
    var message = "Web Notification from FloridaJS! Yeaheee!!!!";
+   const payload = JSON.stringify({ title: "Hello World", body: "This is your first push notification" });
        
    // Hit each browser that registered with us.
    for (var i=0;i < tokenlist.length;i++) {
@@ -83,7 +82,8 @@ app.get('/notify',function(req,res) {
        
        // MAGIC!
        try {
-	 webpush.sendNotification(pushSubscription,message,options);
+	 webpush.sendNotification(pushSubscription,payload); // ,options);
+          console.log("Notification successful");
        } catch(ex) { 
 	  console.error("error in sendNotification)",ex);
        }
