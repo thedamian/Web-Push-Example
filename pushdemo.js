@@ -70,8 +70,7 @@ app.get('/notify',function(req,res) {
          privateKey: vapidPrivateKey
        }
    };
-   var message = "Web Notification from FloridaJS! Yeaheee!!!!";
-   const payload = JSON.stringify({ title: "Hello World", body: "This is your first push notification" });
+   const payload = JSON.stringify({ title: "FloridaJS Notifications are amazing", body: "And this event was well worth the money I spent on donations!" });
        
    // Hit each browser that registered with us.
    for (var i=0;i < tokenlist.length;i++) {
@@ -86,16 +85,16 @@ app.get('/notify',function(req,res) {
        
        // MAGIC!
        try {
-	 webpush.sendNotification(pushSubscription,payload); // ,options);
-          console.log("Notification successful");
+	      webpush.sendNotification(pushSubscription,payload); // ,options);
+          console.log(`Notification #${i} sent successful!`);
        } catch(ex) { 
-	  console.error("error in sendNotification)",ex);
+	      console.error(`error in sendNotification #${i})`,ex);
        }
    }
    
    console.log(tokenlist.length + " notification sent");
    
-   res.end( tokenlist.length + " notification sent");
+   res.send( tokenlist.length + " notification sent");
    
 });
 
