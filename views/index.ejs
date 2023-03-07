@@ -9,7 +9,7 @@
             If you were NOT asked for push permissions then please look at the URL and APPROVAL push for this demo<BR />
             <button onclick="location.reload();">Refresh the Page</button>
             <HR><BR>
-            Some Browsers Require action. You can do this action by clicking on: <button onclick="registerServiceWorker()">REGISTER!</button>
+            Some Browsers Require action. You can do this action by clicking on: <button id="register">REGISTER!</button>
         </span>
         
     <script type="module">
@@ -67,6 +67,9 @@ async function registerServiceWorker() {
             PostSubscriptionDetails(subscription);
 }
 
+docukment.getElementById("register").on("click",()=> {
+    registerServiceWorker().catch(console.error);
+})
 
 function PostSubscriptionDetails(Subscription) {
     
