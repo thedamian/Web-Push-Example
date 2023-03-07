@@ -52,7 +52,11 @@ else {
             });
 
             // we are calling this method so it can be called asynchronously 
+            try {
             registerServiceWorker().catch(console.error)
+            } catch (ex) {
+                console.log("Oh cool. Your browser requires a button to be pressed before we can notify you. Ok. \nBelow on the onclick we'll take care of that.")
+            }
 
 
         } // end of  - if ('serviceWorker' in navigator) {
@@ -67,7 +71,8 @@ async function registerServiceWorker() {
             PostSubscriptionDetails(subscription);
 }
 
-docukment.getElementById("register").on("click",()=> {
+// we have to attach AFTER the function is defined. Attach to the "register" button required by some browsers
+document.getElementById("register").on("click",()=> {
     registerServiceWorker().catch(console.error);
 })
 
