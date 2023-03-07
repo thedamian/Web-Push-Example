@@ -13,38 +13,42 @@ This server has three purposes
 // Setup the basics for a basic express server
 const express = require("express")
 const cors = require("cors")
-require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 5004
 app.use(express.json()); // Used to parse JSON bodies
 app.use(express.urlencoded({ extended: true }));
-app.set('view engine', 'ejs');
-app.set("views", __dirname + `/views`);
-app.use(express.static(__dirname + "/public"));
+app.set('view engine', 'ejs'); // I prefer EJS because it reminds me of home
+app.set("views", __dirname + `/views`); // the .ejs file live in the /views directory
+app.use(express.static(__dirname + "/public")); // anything you ask from the root is coming from the /public
+
+
 
 // Push notification setting up
-const webpush = require('web-push');
-const vapidKeys = webpush.generateVAPIDKeys()
-//webpush.setGCMAPIKey(process.env.GCMAPIKEY);
-
+// Push notification setting up
+const webpush = require('web-push'); // web push library that helps us with encryption to packats
+const vapidKeys = webpush.generateVAPIDKeys() // let's get some brand new private and public keys. 
 const vapidPublicKey = vapidKeys.publicKey;
 const vapidPrivateKey = vapidKeys.privateKey;
-console.log("Vapid",vapidPublicKey,vapidPrivateKey);
+// console.log("Vapid keys",vapidPublicKey,vapidPrivateKey); // if you want to depub
 
 webpush.setVapidDetails(
-  'mailto:damian@floridajs.com',
-  vapidPublicKey,
-  vapidPrivateKey
+  'mailto:damian@floridajs.com',  // you can change it in your project or else everyone blames me for your notifications!
+  vapidPublicKey,  // Public key first
+  vapidPrivateKey  // Private key second
 );
 // Push notification setting up
 // Push notification setting up
 
+
+
+// hitting the root website. Ok. I'll give you the contents of index.ejs
 app.get("/",(req,res) => {
-   res.render("index.ejs",{vapidPublicKey:vapidPublicKey});
+   res.render("index.ejs",{vapidPublicKey:vapidPublicKey}); // pass the public key to the front end for it's javascript 
 });
 
-var tokenlist = [];
+let tokenlist = []; // keep trick of all the browser payloads as "tokens"
 
+// This get's called when a new browser registers itself. We save it in the tokenList array.
 app.post('/newbrowser',function(req,res){
     var token = req.body.token;
     var isSafari = (req.headers['user-agent'].indexOf("Safari") > 0);
@@ -52,12 +56,12 @@ app.post('/newbrowser',function(req,res){
     var endpoint = req.body.endpoint;
     tokenlist.push({token:token,auth:auth,isSafari:isSafari,endpoint:endpoint});
     console.log("adding token: "+ token + " with auth: " + auth + " and notification url:" + endpoint);
-    res.end("ok");
+    res.json({success:true});
 });
 
 
-app.get('/notify',function(req,res) { 
-   
+// someone has asked to notify everyone. (i.e. someone went to the /notify website) Remember: You asked for it. 
+app.get('/notify',function(req,res) {    
    var options = {
        TTL: 24 * 60 * 60,
        vapidDetails: {

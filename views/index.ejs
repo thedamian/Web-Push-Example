@@ -4,20 +4,24 @@
             <link rel="manifest" href="/manifest.json" />
             <title>Web API Example</title></head>
     <body>
-        <span id="welcomemsg">If you see this AFTER you accepted Permissions you should refresh the page.<BR>If you were NOT asked for push permissions then please look at the URL and APPROVAL push for this demo</span>
+        <span id="welcomemsg">
+            If you see this AFTER you accepted Permissions you should refresh the page.<BR />
+            If you were NOT asked for push permissions then please look at the URL and APPROVAL push for this demo<BR />
+            <button onclick="window.location('/')">Refresh the Page</button>
+        </span>
+        
     <script>
 
-var vapidPublicKey =urlBase64ToUint8Array('<%- vapidPublicKey %>');
+let  vapidPublicKey =urlBase64ToUint8Array('<%- vapidPublicKey %>'); // this is the PUBLIC Key, passed up from the backend that rendered this page.
 
-    // Let's check if the browser supports notifications
+// Let's check if the browser supports notifications
 if (!("Notification" in window)) {
   alert("This browser does not support web push notification. This Demo has failed for you.  :'-( ");
   document.getElementById("welcomemsg").innerHTML = "This browser does not support desktop notification. This Demo has failed :( ";
 }
 else {
 
-    Notification.requestPermission(
-    function(status) {
+    Notification.requestPermission(function(status) {
         console.log('Notification Permissiong status:',status);
     });
     
@@ -32,55 +36,60 @@ else {
         // Time to register our service worker to listen for notifications and pop them up when we receive them from the server.
 
         // Register the serviceWorker script at /serviceworker.js from our server if supported
-        if (navigator.serviceWorker) { // yes this browser has a serviceWorker functionality.
+        if ('serviceWorker' in navigator) { // yes this browser has a serviceWorker functionality.
+
+            // First. Let's de-register any web workers we have for this domain just in case damian was testing things.
+            // 1) Get all registered ServiceWorkers
+            navigator.serviceWorker.getRegistrations().then((registrations) => {
+                // loop through them and un-register from them.
+                for(let registration of registrations) {
+                        registration.unregister()
+                }
+            }).catch(function(err) {
+                console.log('Service Worker UNregistration failed: ', err);
+            });
+
         
             // Register and get the notification details and send them to our back end server.
                 navigator.serviceWorker.register('/serviceworker.js')
                .then(function(registration) {
                      const subscribeOptions = {
                        userVisibleOnly: true,
-                       applicationServerKey: urlBase64ToUint8Array(
-                                               'BJlEoQeG_Z5umiIhGawf4scU-qF6xprAYbeN18g7dg7Wr89gwcff-Ns47Tw3u307r9eCBm8KAYWDe-SExffdSF0'
-                                             )
+                       applicationServerKey: vapidPublicKey
                      };
-                 
                      return registration.pushManager.subscribe(subscribeOptions);
                })
                .then(function(pushSubscription) {
                    PostSubscriptionDetails(pushSubscription);
                });
-
-
-
-
-        } // end if (navigator.serviceWorker) {
-        
-        
-    }
-    
-}
+        } // end of  - if ('serviceWorker' in navigator) {
+    } // end of if (Notification.permission === 'denied' )
+} // end of - if (!("Notification" in window))
 
 function PostSubscriptionDetails(Subscription) {
     
-    var sub = JSON.parse(JSON.stringify(Subscription));
+    // let's parse the details of the subscription we got back from the creator of this browser
+    let sub = JSON.parse(JSON.stringify(Subscription));
+    let token = sub.keys.p256dh;
+    let  auth = sub.keys.auth;
+    let payload = {endpoint:sub.endpoint,token:token,auth:auth};
+    // we could also send to the server in the payload other things like the user's id. or something special for it to use later. We don't in this example.
     
-    var token = sub.keys.p256dh;
-    var auth = sub.keys.auth;
-    var fields = {endpoint:sub.endpoint,token:token,auth:auth};
-
+    // Let's send this to the backend that will have everything it needs when it needs to notify us.
     fetch('/newbrowser', {
         method: 'POST',
-       headers: new Headers({'Content-Type': 'application/json'}),
-        body: JSON.stringify(fields)
-    }).then(function(data) {
-        console.log("returned from server:");
-	    console.log(data);
+        headers: new Headers({'Content-Type': 'application/json'}),
+        body: JSON.stringify(payload)
+    })
+    .then(res=> res.json())
+    .then(function(data) {
         document.getElementById("welcomemsg").innerHTML = "READY for Notifications!";
         // Todo. Save anything you needed when you "regsitered" with the server and told him how to notify you.
     });
     
 }
 
+// clean up data so it's easier to send. 
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding)

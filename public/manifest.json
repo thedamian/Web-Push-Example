@@ -1,5 +1,4 @@
 {
-    "gcm_sender_id": "68383862663",
     "name": "Web Push",
       "short_name": "push-example",
       "start_url": "/",
