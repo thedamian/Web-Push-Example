@@ -1,11 +1,10 @@
 # Web-Push-Example
 A simple example of a Web Push Notification website and backend.
 
-# Steps to build on your box.
-1) run ```node vapid.js``` - This will get your private and public keys from google servers and WRITE a .env file
-4) run ```npm install```
-5) now run```npm start```
-6) browse to http://localhost:5000  and agree to receive notications (You can navigate to your computers IP from a phone or other device to get notifications there also)
+# Steps to build on your box
+1) run ```npm install```
+2) now run```npm start```
+3) browse to http://localhost:5000  and agree to receive notications (You can navigate to your computers IP from a phone or other device to get notifications there also)
 
 # Send notifications
 You need a "server side" a way to "SEND NOTIFICATIONS" 
